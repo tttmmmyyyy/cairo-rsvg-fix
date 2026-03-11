@@ -1,0 +1,25 @@
+[general]
+name = "cairo-rsvg-fix"
+version = "0.1.0"
+
+[build]
+files = ["cairo.rsvg.fix"]
+objects = ["cairo.rsvg.o"]
+preliminary_commands = [
+    [
+        "make",
+        "cairo.rsvg.o",
+    ],
+    [
+        "/bin/sh",
+        "linker_options.sh",
+    ],
+]
+
+[[dependencies]]
+name = "cairo-fix"
+version = "0.3.0"
+git = { url = "https://github.com/tttmmmyyyy/fixlang-cairo.git" }
+
+[build.test]
+files = ["test.fix"]

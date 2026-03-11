@@ -1,0 +1,29 @@
+module Test;
+
+import Cairo::{create, Format::argb};
+import Cairo.ImageSurface::create;
+import Cairo.Rsvg::{get_intrinsic_size, render_svg};
+import Std::{F64, IO, String, Debug::assert, Option::{as_some, is_none, is_some}};
+
+// A minimal SVG with explicit width and height.
+_test_svg : String;
+_test_svg = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100\" height=\"80\"></svg>";
+
+test : IO ();
+test = (
+    // Test: get_intrinsic_size returns Some with correct dimensions for a valid SVG.
+    let size = *get_intrinsic_size(_test_svg);
+    assert(|_| "get_intrinsic_size should return Some for a valid SVG", size.is_some);;
+    let (w, h) = size.as_some;
+    assert(|_| "get_intrinsic_size should return width 100", w == 100.0);;
+    assert(|_| "get_intrinsic_size should return height 80", h == 80.0);;
+
+    // Test: get_intrinsic_size returns None for invalid input.
+    let bad = *get_intrinsic_size("not svg");
+    assert(|_| "get_intrinsic_size should return None for invalid input", bad.is_none);;
+
+    // Test: render_svg completes without error on an image surface.
+    let surface = *ImageSurface::create(Format::argb, (200_I32, 200_I32));
+    let cairo = *Cairo::create(surface);
+    render_svg(_test_svg, (0.0, 0.0), cairo)
+);

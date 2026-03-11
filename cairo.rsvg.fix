@@ -1,0 +1,47 @@
+module Cairo.Rsvg;
+
+import Cairo::{borrow_io, Cairo};
+import Std::{
+    F64, IO, Option, String, Box::{make, @value}, FFI::mutate_boxed_io, Monad::pure, 
+    Option::{none, some}, String::borrow_c_str_io
+};
+
+// Renders an SVG string onto a Cairo context at the given position.
+// Does nothing if rendering fails.
+//
+// # Parameters
+//
+// * `svg` - SVG string (UTF-8).
+// * `pos` - Drawing origin in pixel coordinates (x, y).
+// * `cairo` - Cairo context.
+render_svg : String -> (F64, F64) -> Cairo -> IO ();
+render_svg = |svg, (x, y), cairo| (
+    cairo.borrow_io(|cr|
+        svg.borrow_c_str_io(|svg_ptr|
+            let _ = *FFI_CALL_IO[I32 cairo_fixlang_rsvg_render_svg(Ptr, Ptr, F64, F64), cr, svg_ptr, x, y];
+            pure()
+        )
+    )
+);
+
+// Returns the intrinsic size (width, height) of an SVG string in pixels.
+// Returns None if the size cannot be determined.
+//
+// # Parameters
+//
+// * `svg` - SVG string (UTF-8).
+get_intrinsic_size : String -> IO (Option (F64, F64));
+get_intrinsic_size = |svg| (
+    svg.borrow_c_str_io(|svg_ptr|
+        let w = Box::make(0.0);
+        let h = Box::make(0.0);
+        let (w, (h, ret)) = *w.mutate_boxed_io(|w_ptr| h.mutate_boxed_io(|h_ptr|
+            FFI_CALL_IO[I32 cairo_fixlang_rsvg_get_intrinsic_size(Ptr, Ptr, Ptr), svg_ptr, w_ptr, h_ptr])
+        );
+        if ret == 0_I32 {
+            pure $ none()
+        } else {
+            pure $ some $ (w.@value, h.@value)
+        }
+    )
+);
