@@ -1,6 +1,7 @@
 [general]
 name = "cairo-rsvg-fix"
-version = "0.1.0"
+version = "0.2.0"
+fix_version = "1.5.0"
 
 [build]
 files = ["cairo.rsvg.fix"]
@@ -18,7 +19,7 @@ preliminary_commands = [
 
 [[dependencies]]
 name = "cairo-fix"
-version = "0.3.0"
+version = "0.4.0"
 git = { url = "https://github.com/tttmmmyyyy/fixlang-cairo.git" }
 
 [build.test]
