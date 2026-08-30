@@ -1,6 +1,6 @@
 # Cairo.Rsvg
 
-Defined in cairo-rsvg-fix@0.1.0
+Defined in cairo-rsvg-fix@0.2.0
 
 ## Values
 
